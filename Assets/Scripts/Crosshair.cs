@@ -7,30 +7,29 @@ public class Crosshair : MonoBehaviour {
 	public GameObject FPS;
 	GameObject hitobject;
 	Transform parentBeforeGrab;
-	Vector3 beforeGrabPos;
+	bool objectGrabbed = false;
 	// Use this for initialization
 	void Start () {
+		Cursor.visible = false;
 		hitobject = gameObject;
 	    parentBeforeGrab = gameObject.transform.parent;
-		beforeGrabPos = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		var directionRay = transform.forward;
 		ray = fpsCam.ScreenPointToRay(transform.position);
 		Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
 		RaycastHit hit;
 		if(Physics.Raycast(ray, out hit, Mathf.Infinity)){
-			if(Input.GetMouseButton(0) && hit.transform.gameObject.tag == "movable"){
+			if(Input.GetMouseButtonDown(0) && hit.transform.gameObject.tag == "movable"){
 				parentBeforeGrab = hit.transform.parent;
 				hitobject = hit.transform.gameObject;
-				beforeGrabPos = hit.transform.position;
+				objectGrabbed = true;
+				Debug.Log(parentBeforeGrab);
+
 				hit.transform.parent = FPS.transform;
-				Debug.Log("On click");
 			}
-			else{
-				hitobject.transform.position = beforeGrabPos;
+			if(Input.GetMouseButtonUp(0) && objectGrabbed){
 				hitobject.transform.parent = parentBeforeGrab;
 				Debug.Log(hitobject + " hit object");
 
